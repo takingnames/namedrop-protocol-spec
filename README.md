@@ -130,7 +130,7 @@ this:
 `157-245-231-242.bootstrap.takingnames.live`
 
 The purpose of these domains is to allow the client to retrieve a TLS
-certificate from a service like LetsEncrypt[3], which makes the OAuth2 flows
+certificate from a service like [LetsEncrypt][3], which makes the OAuth2 flows
 more secure. This is particularly useful for self-hosters who are trying to
 bootstrap a service that doesn't yet have a domain or certificate.
 
