@@ -67,7 +67,7 @@ Data is returned as JSON in the following format:
 
 ```json
 {
-  "owner": "<owner identifier",
+  "owner": "<owner identifier>",
   "scopes": [
     {
       "domain": "<domain of scope>",
@@ -84,12 +84,28 @@ Data is returned as JSON in the following format:
 
 Host values can contain wildcard characters. In this case, the scope grants
 permissions for any subdomain which has the host as a suffix, minus the
-wildcard character '*'.
+wildcard character '\*'.
 
 
 **`PUT /records`**
 
 Creates a new record. The provided token must have the proper permissions.
+
+The request is JSON in the following format:
+
+```json
+{
+  "domain": "<domain>",
+  "host": "<host>",
+  "type": "<type>",
+  "value": "<value>",
+  "ttl": <ttl>,
+  "priority": <priority>,
+}
+```
+
+Where `type` is the record type such as `A`, `CNAME`, `MX`, etc. `ttl` and
+`priority` are both integers.
 
 
 **`GET /my-ip`**
@@ -97,6 +113,8 @@ Creates a new record. The provided token must have the proper permissions.
 Returns the public IP of the client, as seen from the server. This is useful
 for helping self-hosted clients test whether they can be reached by the outside
 world.
+
+The IP is returned as a simple string.
 
 
 
