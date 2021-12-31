@@ -7,8 +7,8 @@ is encouraged.
 
 # Overview
 
-NameDrop is based on [OAuth2][1], with a few additions to faciliate domain name
-delegation.
+NameDrop is based on [OAuth2][1], with a few additions to facilitate domain
+name delegation.
 
 One key difference from how OAuth2 is generally implemented, is that client
 registration with the authorization server is not required before initiating
@@ -45,7 +45,7 @@ Authorization endpoint (user consent to get code). Can be a web browser
 redirect, or a direct link, such as one printed from a CLI application.
 
 
-**`GET /code (browser redirect)`**
+**`GET /code`**
 
 Redirect endpoint (where code is returned on client). Always a web browser
 redirect.
