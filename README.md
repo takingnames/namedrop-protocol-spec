@@ -63,6 +63,29 @@ Token endpoint (swap code for token). Always server-to-server.
 Retrieves data for the token used in the request. This is critical for the
 client application to determine what permissions have been granted.
 
+Data is returned as JSON in the following format:
+
+```json
+{
+  "owner": "<owner identifier",
+  "scopes": [
+    {
+      "domain": "<domain of scope>",
+      "host": "<host of scope>",
+    },
+    {
+      "domain": "<domain of scope>",
+      "host": "<host of scope>",
+    }
+    ...
+  ]
+}
+```
+
+Host values can contain wildcard characters. In this case, the scope grants
+permissions for any subdomain which has the host as a suffix, minus the
+wildcard character '*'.
+
 
 **`PUT /records`**
 
