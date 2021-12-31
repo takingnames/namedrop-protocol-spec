@@ -121,14 +121,13 @@ The IP is returned as a simple string.
 
 This causes the server to create a special `A` and/or `AAAA` record pointing at
 the client's IP address, as seen by the server. The domain must start with the
-IP address, but with invalid characters such as '.' or ':' replaced with '-'.
-The rest of the domain can be anything. The created domain is returned as a
-simple string.
+IP address, but with '.' or ':' characters replaced with '-'. The rest of the
+domain can be anything. The created domain is returned as a simple string.
 
 So, for example, TakingNames.io creates the record and returns something like
 this:
 
-`157.245.231.242.bootstrap.takingnames.live`
+`157-245-231-242.bootstrap.takingnames.live`
 
 The purpose of these domains is to allow the client to retrieve a TLS
 certificate from a service like LetsEncrypt[3], which makes the OAuth2 flows
