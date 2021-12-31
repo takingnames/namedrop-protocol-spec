@@ -117,9 +117,33 @@ world.
 The IP is returned as a simple string.
 
 
+**`POST /ip-domain`**
+
+This causes the server to create a special `A` and/or `AAAA` record pointing at
+the client's IP address, as seen by the server. The domain must start with the
+IP address, but with invalid characters such as '.' or ':' replaced with '-'.
+The rest of the domain can be anything. The created domain is returned as a
+simple string.
+
+So, for example, TakingNames.io creates the record and returns something like
+this:
+
+`157.245.231.242.bootstrap.takingnames.live`
+
+The purpose of these domains is to allow the client to retrieve a TLS
+certificate from a service like LetsEncrypt[3], which makes the OAuth2 flows
+more secure. This is particularly useful for self-hosters who are trying to
+bootstrap a service that doesn't yet have a domain or certificate.
+
+The server should ensure the domain remains valid for at least 5 minutes
+after a successful request, but no guarantees are required beyond that.
+
+
 
 [0]: https://takingnames.io
 
 [1]: https://oauth.net/2/
 
 [2]: https://aaronparecki.com/2018/07/07/7/oauth-for-the-open-web
+
+[3]: https://letsencrypt.org/
