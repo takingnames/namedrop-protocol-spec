@@ -117,7 +117,7 @@ world.
 The IP is returned as a simple string.
 
 
-**`POST /ip-domain`**
+**`GET /ip-domain`**
 
 This causes the server to create a special `A` and/or `AAAA` record pointing at
 the client's IP address, as seen by the server. The domain must start with the
