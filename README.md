@@ -1,4 +1,4 @@
-# The NameDrop Protocol (draft version 0.1.0)
+# The NameDrop Protocol (draft version 0.2.0)
 
 NameDrop is developed by [TakingNames.io][0] for delegating control over DNS
 domains and subdomains. It is an open protocol, and implementation by others
@@ -45,7 +45,7 @@ Authorization endpoint (user consent to get code). Can be a web browser
 redirect, or a direct link, such as one printed from a CLI application.
 
 
-**`GET /code`**
+**`GET /callback`**
 
 Redirect endpoint (where code is returned on client). Always a web browser
 redirect.
