@@ -87,7 +87,7 @@ permissions for any subdomain which has the host as a suffix, minus the
 wildcard character '\*'.
 
 
-**`PUT /records`**
+**`POST /records`**
 
 Creates a new record. The provided token must have the proper permissions.
 
