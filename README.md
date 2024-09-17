@@ -1,4 +1,4 @@
-# The NameDrop Protocol (draft version 0.2.0)
+# The NameDrop Protocol (draft version 0.3.0)
 
 NameDrop is developed by [TakingNames.io][0] for delegating control over DNS
 domains and subdomains. It is an open protocol, and implementation by others
@@ -29,11 +29,20 @@ be useful for namespacing if the server has other non-NameDrop endpoints.
 
 # OAuth2 scopes
 
-NameDrop currently only supports a single OAuth2 scope: `subdomain`. This
-scope requests complete control over a domain or subdomain. There will likely
-be additional scopes added in the future, such as `wildcard`, `dyndns`, scopes
-that restrict to specific record types, etc.
+NameDrop scopes are prefixed with `namedrop-`, in order to facilitate
+composition with oauther OAuth2 protocols on the same authorization server.
 
+The following scopes are currently specified:
+
+* `namedrop-hosts` - grants control over A, AAAA, and CNAME records
+* `namedrop-mail` - grants control over MX, DKIM TXT, and SPF TXT records
+* `namedrop-acme` - grants control over ACME TXT records
+
+Permissions are granted to a FQDN (domain or subdomain). Currently this works
+in a hierarchical fashion, ie if you have a token with permissions for
+`example.com`, you can create records for any subdomain of `example.com`
+(`*.example.com`). Likewise, if you have permissions for `sub.example.com`, you
+can create records for `*.sub.example.com`, but not `example.com`.
 
 # OAuth2 endpoints
 
@@ -44,75 +53,161 @@ The basic OAuth2 endpoints are defined as follows:
 Authorization endpoint (user consent to get code). Can be a web browser
 redirect, or a direct link, such as one printed from a CLI application.
 
-
-**`GET /callback`**
-
-Redirect endpoint (where code is returned on client). Always a web browser
-redirect.
-
-
 **`POST /token`**
 
 Token endpoint (swap code for token). Always server-to-server.
 
 
-# Other endpoints
+# Token
 
-**`GET /token-data`**
+Access tokens are returned as JSON in the following format:
 
-Retrieves data for the token used in the request. This is critical for the
-client application to determine what permissions have been granted.
-
-Data is returned as JSON in the following format:
-
-```json
+```javascript
 {
-  "owner": "<owner identifier>",
-  "scopes": [
+  "access_token": String(),
+  "refresh_token": String(),
+  "token_type": "bearer",
+  "expires_in": Number(),
+  "permissions": [
     {
-      "domain": "<domain of scope>",
-      "host": "<host of scope>",
-    },
-    {
-      "domain": "<domain of scope>",
-      "host": "<host of scope>",
+      "scope": String(),
+      "domain": String(),
+      "host": String(),
     }
-    ...
   ]
 }
 ```
 
-Host values can contain wildcard characters. In this case, the scope grants
-permissions for any subdomain which has the host as a suffix, minus the
-wildcard character '\*'.
-
-
-**`POST /records`**
-
-Creates a new record. The provided token must have the proper permissions.
-
-The request is JSON in the following format:
+Here's an example:
 
 ```json
 {
-  "domain": "<domain>",
-  "host": "<host>",
-  "type": "<type>",
-  "value": "<value>",
-  "ttl": <ttl>,
-  "priority": <priority>,
+  "access_token": "lkjaslkajsoidfnaiosnf",
+  "refresh_token": "iousdoinfoiseofinsef",
+  "token_type": "bearer",
+  "expires_in": 3600,
+  "permissions": [
+    {
+      "scope": "namedrop-hosts",
+      "domain": "example.com",
+      "host": ""
+    },
+    {
+      "scope": "namedrop-mail",
+      "domain": "example.com",
+      "host": "mail"
+    },
+    {
+      "scope": "namedrop-acme",
+      "domain": "example.com",
+      "host": ""
+    }
+  ]
 }
 ```
 
-Where `type` is the record type such as `A`, `CNAME`, `MX`, etc. `ttl` and
+# Setting records
+
+Setting records is done via a simple RPC API. All requests use the POST method
+with a JSON body. The `Content-Type` can be anything. This allows browser
+clients to send "simple" requests that don't trigger CORS preflights, which are
+an abomination. This is safe because all requests are authorized via the
+included token property.
+
+For `create-records`, `set-records`, and `delete-records`, the top-level
+`domain` and `host` properties are used as defaults for any records where they
+are missing. This can make client code less verbose.
+
+`type` is the record type such as `A`, `CNAME`, `MX`, etc. `ttl` and
 `priority` are both integers.
 
 
+**`POST /get-records`**
+
+Retrieves current records.
+
+The request is JSON in the following format:
+
+```javascript
+{
+  "domain": String(),
+  "host": String(),
+  "token": String(),
+}
+```
+
+**`POST /create-records`**
+
+Create new records, returning an error if any duplicate records exist.
+
+```json
+{
+  "domain": String(),
+  "host": String(),
+  "records": [
+  {
+    "domain": String(),
+    "host": String(),
+    "type": String(),
+    "value": String(),
+    "ttl": Number(),
+    "priority": Number(),
+  },
+  // more records
+}
+```
+
+**`POST /set-records`**
+
+Set records, overriding any existing duplicate records.
+
+```json
+{
+  "domain": String(),
+  "host": String(),
+  "records": [
+  {
+    "domain": String(),
+    "host": String(),
+    "type": String(),
+    "value": String(),
+    "ttl": Number(),
+    "priority": Number(),
+  },
+  // more records
+}
+```
+
+**`POST /delete-records`**
+
+Delete records, silently ignoring any records that don't exist.
+
+```json
+{
+  "domain": String(),
+  "host": String(),
+  "records": [
+  {
+    "domain": String(),
+    "host": String(),
+    "type": String(),
+    "value": String(),
+    "ttl": Number(),
+    "priority": Number(),
+  },
+  // more records
+}
+```
+
+
+
+# Other endpoints
+
 **`GET /my-ip`**
 
-Returns the public IP of the client, as seen from the server. This is useful
-for helping self-hosted clients test whether they can be reached by the outside
-world.
+Returns the public IP of the client, as observed from the server. This is
+useful for helping self-hosted clients test whether they can be reached by the
+outside world.
 
 The IP is returned as a simple string.
 
@@ -120,9 +215,9 @@ The IP is returned as a simple string.
 **`GET /ip-domain`**
 
 This causes the server to create a special `A` and/or `AAAA` record pointing at
-the client's IP address, as seen by the server. The domain must start with the
-IP address, but with '.' or ':' characters replaced with '-'. The rest of the
-domain can be anything. The created domain is returned as a simple string.
+the client's IP address, as observed by the server. The domain must start with
+the IP address, but with '.' or ':' characters replaced with '-'. The rest of
+the domain can be anything. The created domain is returned as a simple string.
 
 So, for example, TakingNames.io creates the record and returns something like
 this:
