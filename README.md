@@ -108,7 +108,7 @@ Example:
 
 # Getting and setting records
 
-Setting records is done via a simple RPC API. All requests use the POST method
+Records are managed via a simple RPC API. All requests use the POST method
 with a JSON body. The `Content-Type` can be anything. This allows browser
 clients to send "simple" requests that don't trigger CORS preflights, which are
 an abomination. This is safe because all requests are authorized via the
@@ -124,13 +124,15 @@ less verbose.
 `priority` are both integers.
 
 When setting `value` for a record, the template variable `{{host}}` can be
-used. It will be replaced with the actual host value. This is particularly
-useful for things like DKIM and ACME challenge records.
+used. It will be replaced with the actual host value when the server evaluates
+the record. This is particularly useful for things like DKIM and ACME challenge
+records.
 
 
-**`POST /get-records`**
+## `POST /get-records`
 
-Retrieves current records.
+Retrieves current records. This could be done via DNS, but it's convenient to
+provide it as part of the NameDrop API to make things easier for clients.
 
 The request is JSON in the following format:
 
@@ -152,7 +154,7 @@ Example:
 }
 ```
 
-**`POST /create-records`**
+## `POST /create-records`
 
 Create new records, returning an error if any duplicate records exist.
 
@@ -194,7 +196,7 @@ Example:
 }
 ```
 
-**`POST /set-records`**
+## `POST /set-records`
 
 Set records, overriding any existing duplicate records.
 
@@ -236,7 +238,7 @@ Example:
 }
 ```
 
-**`POST /delete-records`**
+## `POST /delete-records`
 
 Delete records, silently ignoring any records that don't exist.
 
@@ -282,7 +284,7 @@ Example:
 
 # Other endpoints
 
-**`GET /my-ip`**
+## `GET /my-ip`
 
 Returns the public IP of the client, as observed from the server. This is
 useful for helping self-hosted clients test whether they can be reached by the
@@ -291,7 +293,7 @@ outside world.
 The IP is returned as a simple string.
 
 
-**`GET /ip-domain`**
+## `GET /ip-domain`
 
 This causes the server to create a special `A` and/or `AAAA` record pointing at
 the client's IP address, as observed by the server. The domain must start with
