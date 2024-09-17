@@ -106,7 +106,7 @@ Example:
 }
 ```
 
-# Setting records
+# Getting and setting records
 
 Setting records is done via a simple RPC API. All requests use the POST method
 with a JSON body. The `Content-Type` can be anything. This allows browser
@@ -116,10 +116,16 @@ included token property.
 
 For `create-records`, `set-records`, and `delete-records`, the top-level
 `domain` and `host` properties are used as defaults for any records where they
-are missing. This can make client code less verbose.
+are missing. This information can also be inferred from the token, assuming it
+doesn't have permissions for multiple domains/hosts. This can make client code
+less verbose.
 
 `type` is the record type such as `A`, `CNAME`, `MX`, etc. `ttl` and
 `priority` are both integers.
+
+When setting `value` for a record, the template variable `{{host}}` can be
+used. It will be replaced with the actual host value. This is particularly
+useful for things like DKIM and ACME challenge records.
 
 
 **`POST /get-records`**
@@ -133,6 +139,16 @@ The request is JSON in the following format:
   "domain": String(),
   "host": String(),
   "token": String(),
+}
+```
+
+Example:
+
+```json
+{
+  "domain": "example.com",
+  "host": "sub",
+  "token": "lkjaslkajsoidfnaiosnf"
 }
 ```
 
@@ -157,6 +173,27 @@ Create new records, returning an error if any duplicate records exist.
 }
 ```
 
+Example:
+
+```json
+{
+  "domain": "example.com",
+  "host": "sub",
+  "token": "lkjaslkajsoidfnaiosnf",
+  "records": [
+    {
+      "type": "A",
+      "value": "192.168.0.1"
+    },
+    {
+      "host": "sub1._domainkey.{{host}}",
+      "type": "CNAME",
+      "value": "f1.example.com.dkim-server.com"
+    }
+  ]
+}
+```
+
 **`POST /set-records`**
 
 Set records, overriding any existing duplicate records.
@@ -178,6 +215,27 @@ Set records, overriding any existing duplicate records.
 }
 ```
 
+Example:
+
+```json
+{
+  "domain": "example.com",
+  "host": "sub",
+  "token": "lkjaslkajsoidfnaiosnf",
+  "records": [
+    {
+      "type": "A",
+      "value": "192.168.0.1"
+    },
+    {
+      "host": "sub1._domainkey.{{host}}",
+      "type": "CNAME",
+      "value": "f1.example.com.dkim-server.com"
+    }
+  ]
+}
+```
+
 **`POST /delete-records`**
 
 Delete records, silently ignoring any records that don't exist.
@@ -196,6 +254,27 @@ Delete records, silently ignoring any records that don't exist.
     "priority": Number(),
   },
   // more records
+}
+```
+
+Example:
+
+```json
+{
+  "domain": "example.com",
+  "host": "sub",
+  "token": "lkjaslkajsoidfnaiosnf",
+  "records": [
+    {
+      "type": "A",
+      "value": "192.168.0.1"
+    },
+    {
+      "host": "sub1._domainkey.{{host}}",
+      "type": "CNAME",
+      "value": "f1.example.com.dkim-server.com"
+    }
+  ]
 }
 ```
 
