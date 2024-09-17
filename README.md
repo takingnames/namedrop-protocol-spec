@@ -78,7 +78,7 @@ Access tokens are returned as JSON in the following format:
 }
 ```
 
-Here's an example:
+Example:
 
 ```json
 {
@@ -140,7 +140,7 @@ The request is JSON in the following format:
 
 Create new records, returning an error if any duplicate records exist.
 
-```json
+```javascript
 {
   "domain": String(),
   "host": String(),
@@ -161,7 +161,7 @@ Create new records, returning an error if any duplicate records exist.
 
 Set records, overriding any existing duplicate records.
 
-```json
+```javascript
 {
   "domain": String(),
   "host": String(),
@@ -182,7 +182,7 @@ Set records, overriding any existing duplicate records.
 
 Delete records, silently ignoring any records that don't exist.
 
-```json
+```javascript
 {
   "domain": String(),
   "host": String(),
