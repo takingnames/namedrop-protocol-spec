@@ -30,13 +30,15 @@ be useful for namespacing if the server has other non-NameDrop endpoints.
 # OAuth2 scopes
 
 NameDrop scopes are prefixed with `namedrop-`, in order to facilitate
-composition with oauther OAuth2 protocols on the same authorization server.
+composition with other OAuth2 protocols on the same authorization server.
 
 The following scopes are currently specified:
 
 * `namedrop-hosts` - grants control over A, AAAA, and CNAME records
 * `namedrop-mail` - grants control over MX, DKIM TXT, and SPF TXT records
 * `namedrop-acme` - grants control over ACME TXT records
+* `namedrop-atproto-handle` - grants control over atproto `did=` TXT records
+  (see [here](https://atproto.com/specs/handle))
 
 Permissions are granted to a FQDN (domain or subdomain). Currently this works
 in a hierarchical fashion, ie if you have a token with permissions for
@@ -110,7 +112,9 @@ Example:
 
 Records are managed via a simple RPC API. All requests use the POST method
 with a JSON body. The `Content-Type` can be anything. This allows browser
-clients to send "simple" requests that don't trigger CORS preflights, which are
+clients to send
+"[simple](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#simple_requests)"
+requests that don't trigger CORS preflights, which are
 an abomination. This is safe because all requests are authorized via the
 included token property.
 
