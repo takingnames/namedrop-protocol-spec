@@ -34,7 +34,7 @@ composition with other OAuth2 protocols on the same authorization server.
 
 The following scopes are currently specified:
 
-* `namedrop-hosts` - grants control over A, AAAA, and CNAME records
+* `namedrop-hosts` - grants control over A, AAAA, CNAME, and ALIAS (aka ANAME) records
 * `namedrop-mail` - grants control over MX, DKIM TXT, and SPF TXT records
 * `namedrop-acme` - grants control over ACME TXT records
 * `namedrop-atproto-handle` - grants control over atproto `did=` TXT records
