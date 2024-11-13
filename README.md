@@ -1,4 +1,4 @@
-# The NameDrop Protocol (draft version 0.3.0)
+# The NameDrop Protocol (draft version 0.4.0)
 
 NameDrop is developed by [TakingNames.io][0] for delegating control over DNS
 domains and subdomains. It is an open protocol, and implementation by others
