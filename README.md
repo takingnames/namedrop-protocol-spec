@@ -1,6 +1,6 @@
 # The NameDrop Protocol (draft version 0.4.0)
 
-NameDrop is developed by [TakingNames.io][0] for delegating control over DNS
+NameDrop is developed by [TakingNames][0] for delegating control over DNS
 domains and subdomains. It is an open protocol, and implementation by others
 is encouraged.
 
@@ -20,7 +20,7 @@ authorization servers should display the `client_id` to users and inform them
 that is who is requesting access.
 
 All API endpoints described in this article are assumed to be appended to a
-base URL. For example, TakingNames.io uses
+base URL. For example, TakingNames uses
 
 `https://takingnames.io/namedrop`
 
@@ -311,7 +311,7 @@ bootstrap a service that doesn't yet have a domain or certificate.
 One way for the server to create these records is by making the subdomain a
 representation of the client's IP address.
 
-For example, if TakingNames.io received a `/temp-subdomain` request from
+For example, if TakingNames received a `/temp-subdomain` request from
 `157.245.231.242`, it would create the record and returns something like
 this:
 
